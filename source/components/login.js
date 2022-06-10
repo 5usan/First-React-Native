@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -8,9 +8,10 @@ import {
   Button,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {useLoginMutation} from '../services/loginApi';
-import {login} from '../store/authSlice';
+import {login} from '../store/slice/authSlice';
+import Layout from './Layout';
 
 const Login = ({navigation}) => {
   const [email, setEmail] = useState('');
@@ -20,6 +21,21 @@ const Login = ({navigation}) => {
   const [invalid, setInvalid] = useState(false);
   const [isLogin] = useLoginMutation();
   const dispatch = useDispatch();
+  const isLoggedInState = useSelector(state => state.auth.isLoggedIn);
+
+  useEffect(() => {
+    const isLoggedIn = async () => {
+      if (isLoggedInState) {
+        navigation.navigate('Profile');
+      } else {
+        const isLoggedInStorage = JSON.parse(
+          await AsyncStorage.getItem('isLoggedIn'),
+        );
+        isLoggedInStorage && navigation.navigate('Profile');
+      }
+    };
+    isLoggedIn();
+  }, [isLoggedInState]);
 
   const submitHandler = async () => {
     setInvalid(false);
@@ -38,7 +54,7 @@ const Login = ({navigation}) => {
       const user = loginData.data.payload.data;
       await AsyncStorage.setItem('isLoggedIn', JSON.stringify(true));
       await AsyncStorage.setItem('user', JSON.stringify(user));
-      dispatch(login(loginData));
+      dispatch(login(user));
       navigation.navigate('Profile', {
         email,
         password,
@@ -47,41 +63,36 @@ const Login = ({navigation}) => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.heading}>OFDesk</Text>
+    <Layout>
+      <View style={styles.welcome}>
+        <Text style={styles.hello}>Hello there, welcome back</Text>
       </View>
-      <View style={styles.content}>
-        <View style={styles.welcome}>
-          <Text style={styles.hello}>Hello there, welcome back</Text>
-        </View>
-        <View>
-          <TextInput
-            style={styles.input}
-            placeholder="E-mail"
-            placeholderTextColor="#bfbcbb"
-            onChangeText={setEmail}
-          />
-          {errorEmail && <Text style={styles.error}>Invalid Email</Text>}
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            onChangeText={setPassword}
-            placeholderTextColor="#bfbcbb"
-            secureTextEntry={true}
-          />
-          {errorPassword && <Text style={styles.error}>Invalid Password</Text>}
-          {invalid && (
-            <Text style={styles.error}>Email or Password is incorrect</Text>
-          )}
-        </View>
-        <View>
-          <Text style={styles.forget}>Forget your password?</Text>
-          <Button title="Sign In" color="#6F3CCF" onPress={submitHandler} />
-        </View>
-        <Text style={styles.forget}>Not here, Sign up instead</Text>
+      <View>
+        <TextInput
+          style={styles.input}
+          placeholder="E-mail"
+          placeholderTextColor="#bfbcbb"
+          onChangeText={setEmail}
+        />
+        {errorEmail && <Text style={styles.error}>Invalid Email</Text>}
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          onChangeText={setPassword}
+          placeholderTextColor="#bfbcbb"
+          secureTextEntry={true}
+        />
+        {errorPassword && <Text style={styles.error}>Invalid Password</Text>}
+        {invalid && (
+          <Text style={styles.error}>Email or Password is incorrect</Text>
+        )}
       </View>
-    </View>
+      <View>
+        <Text style={styles.forget}>Forget your password?</Text>
+        <Button title="Sign In" color="#6F3CCF" onPress={submitHandler} />
+      </View>
+      <Text style={styles.forget}>Not here, Sign up instead</Text>
+    </Layout>
   );
 };
 export default Login;

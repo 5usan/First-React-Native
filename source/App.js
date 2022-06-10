@@ -14,27 +14,14 @@ const App = () => {
       <NavigationContainer>
         <Stack.Navigator
           screenOptions={{
-            // headerStyle: {
-            //   backgroundColor: '#542770',
-            // },
-            // headerTintColor: '#fff',
-            // headerTitleStyle: {
-            //   fontWeight: 'bold',
-            // },
             headerShown: false,
           }}>
           <Stack.Screen
             name="Login"
             component={Login}
-            options={{title: 'Overview'}}
+            // options={{title: 'Overview'}}
           />
-          <Stack.Screen
-            name="Profile"
-            component={Profile}
-            options={({route}) => ({
-              title: route.params.email,
-            })}
-          />
+          <Stack.Screen name="Profile" component={Profile} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
