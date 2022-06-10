@@ -5,19 +5,24 @@ import {
   StyleSheet,
   TextInput,
   Dimensions,
-  Alert,
   Button,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useDispatch} from 'react-redux';
+import {useLoginMutation} from '../services/loginApi';
+import {login} from '../store/authSlice';
 
-const SimpleForm = () => {
+const Login = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorEmail, setErrorEmail] = useState(false);
   const [errorPassword, setErrorPassword] = useState(false);
-  const changeHandler = e => {
-    console.log(e.target);
-  };
-  const submitHandler = () => {
+  const [invalid, setInvalid] = useState(false);
+  const [isLogin] = useLoginMutation();
+  const dispatch = useDispatch();
+
+  const submitHandler = async () => {
+    setInvalid(false);
     if (email === '') {
       setErrorEmail(prepState => (prepState = true));
     }
@@ -26,9 +31,18 @@ const SimpleForm = () => {
     } else {
       setErrorEmail(false);
       setErrorPassword(false);
-      Alert.alert('Login', `E-mail: ${email} and Password: ${password}`, [
-        {text: 'OK', onPress: () => console.log('OK Pressed')},
-      ]);
+      const loginData = await isLogin({email, password});
+      if (loginData.error) {
+        setInvalid(true);
+      }
+      const user = loginData.data.payload.data;
+      await AsyncStorage.setItem('isLoggedIn', JSON.stringify(true));
+      await AsyncStorage.setItem('user', JSON.stringify(user));
+      dispatch(login(loginData));
+      navigation.navigate('Profile', {
+        email,
+        password,
+      });
     }
   };
 
@@ -47,7 +61,6 @@ const SimpleForm = () => {
             placeholder="E-mail"
             placeholderTextColor="#bfbcbb"
             onChangeText={setEmail}
-            onChange={changeHandler}
           />
           {errorEmail && <Text style={styles.error}>Invalid Email</Text>}
           <TextInput
@@ -55,8 +68,12 @@ const SimpleForm = () => {
             placeholder="Password"
             onChangeText={setPassword}
             placeholderTextColor="#bfbcbb"
+            secureTextEntry={true}
           />
-          {errorPassword && <Text style={styles.error}>Invalid Passowrd</Text>}
+          {errorPassword && <Text style={styles.error}>Invalid Password</Text>}
+          {invalid && (
+            <Text style={styles.error}>Email or Password is incorrect</Text>
+          )}
         </View>
         <View>
           <Text style={styles.forget}>Forget your password?</Text>
@@ -67,7 +84,7 @@ const SimpleForm = () => {
     </View>
   );
 };
-export default SimpleForm;
+export default Login;
 
 const styles = StyleSheet.create({
   container: {
