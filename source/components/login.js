@@ -1,17 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  Dimensions,
-  Button,
-} from 'react-native';
+import {View, Text, StyleSheet, TextInput, Dimensions} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch, useSelector} from 'react-redux';
 import {useLoginMutation} from '../services/loginApi';
 import {login} from '../store/slice/authSlice';
-import Layout from './Layout';
+import Button from './common/Button';
 
 const Login = ({navigation}) => {
   const [email, setEmail] = useState('');
@@ -63,91 +56,96 @@ const Login = ({navigation}) => {
   };
 
   return (
-    <Layout>
+    <View style={styles.wrapper}>
       <View style={styles.welcome}>
-        <Text style={styles.hello}>Hello there, welcome back</Text>
+        <Text style={styles.ofdesk}>OF-Desk</Text>
       </View>
-      <View>
-        <TextInput
-          style={styles.input}
-          placeholder="E-mail"
-          placeholderTextColor="#bfbcbb"
-          onChangeText={setEmail}
-        />
-        {errorEmail && <Text style={styles.error}>Invalid Email</Text>}
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          onChangeText={setPassword}
-          placeholderTextColor="#bfbcbb"
-          secureTextEntry={true}
-        />
-        {errorPassword && <Text style={styles.error}>Invalid Password</Text>}
-        {invalid && (
-          <Text style={styles.error}>Email or Password is incorrect</Text>
-        )}
+      <View style={styles.login}>
+        <View style={styles.loginView}>
+          <TextInput
+            style={styles.input}
+            placeholder="E-mail"
+            placeholderTextColor="#bfbcbb"
+            onChangeText={setEmail}
+          />
+          {errorEmail && <Text style={styles.error}>Invalid Email</Text>}
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            onChangeText={setPassword}
+            placeholderTextColor="#bfbcbb"
+            secureTextEntry={true}
+          />
+          {errorPassword && <Text style={styles.error}>Invalid Password</Text>}
+          {invalid && (
+            <Text style={styles.error}>Email or Password is incorrect</Text>
+          )}
+        </View>
+        <View style={styles.lastView}>
+          <Text style={styles.forget}>Forget your password?</Text>
+          <Button name="Sign In" onPress={submitHandler} />
+          <Text style={styles.forget}>Not here, Sign up instead</Text>
+        </View>
       </View>
-      <View>
-        <Text style={styles.forget}>Forget your password?</Text>
-        <Button title="Sign In" color="#6F3CCF" onPress={submitHandler} />
-      </View>
-      <Text style={styles.forget}>Not here, Sign up instead</Text>
-    </Layout>
+    </View>
   );
 };
 export default Login;
 
 const styles = StyleSheet.create({
-  container: {
+  wrapper: {
     flexDirection: 'column',
-    width: Dimensions.get('window').width,
     height: Dimensions.get('window').height,
     alignItems: 'center',
-    justifyContent: 'space-evenly',
-    backgroundColor: '#21254A',
+    justifyContent: 'space-around',
   },
-  header: {
-    backgroundColor: '#6F3CCF',
-    height: 80,
+
+  welcome: {
+    flex: 0.9,
     width: Dimensions.get('window').width,
+    backgroundColor: '#4c739c',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  heading: {
-    fontSize: 40,
-    color: 'white',
-  },
-  content: {
-    flexDirection: 'column',
-    height: Dimensions.get('window').height - 80,
-    width: Dimensions.get('window').width,
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    padding: 20,
-  },
-  welcome: {
-    width: 350,
-  },
-  hello: {
+
+  ofdesk: {
     color: 'white',
     fontSize: 60,
+    fontWeight: 'bold',
   },
+
+  login: {
+    flex: 1.1,
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
+  },
+
   input: {
     width: 350,
     borderBottomWidth: 1,
     borderBottomColor: '#4B5072',
     fontSize: 30,
     marginTop: 15,
-    color: 'white',
+    color: 'black',
   },
+
   forget: {
-    color: 'white',
-    fontSize: 15,
-    marginBottom: 30,
+    color: '#000',
+    fontSize: 18,
+    margin: 20,
   },
+
   error: {
     color: 'red',
     fontSize: 15,
+  },
+
+  lastView: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    // marginTop: -100,
   },
 });

@@ -1,5 +1,13 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, Button, StyleSheet} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  Dimensions,
+  ScrollViewComponent,
+  ScrollView,
+} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch, useSelector} from 'react-redux';
 import {useLazyGetUserDetailsQuery} from '../services/userApi';
@@ -31,15 +39,53 @@ const Profile = ({navigation}) => {
   console.log(userDetails, 'details');
   return (
     <Layout>
-      <View style={styles.wrapper}>
-        {/* <Text>{response.data && response.data.code}</Text> */}
-        <Button
-          title="Go Back"
-          onPress={() => {
-            navigation.goBack();
-          }}
-        />
-      </View>
+      {userDetails && (
+        <ScrollView>
+          <View style={styles.wrapper}>
+            <View style={styles.info}>
+              <Image
+                source={{
+                  uri: userDetails.about.image,
+                }}
+                style={{width: 170, height: 170}}
+              />
+              <View style={styles.socials}>
+                <Text style={styles.text}>
+                  Github: {userDetails.about.socialMedia.github}
+                </Text>
+                <Text style={styles.text}>
+                  Linkedin: {userDetails.about.socialMedia.linkedin}
+                </Text>
+              </View>
+            </View>
+            <View style={styles.details}>
+              <Text style={styles.text}>Name: {userDetails.about.name}</Text>
+              <Text style={styles.text}>DOB: {userDetails.about.dob}</Text>
+              <Text style={styles.text}>
+                Phone Number: {userDetails.about.cellNo.mobileNumber}
+              </Text>
+              <Text style={styles.text}>Email: {userDetails.about.email}</Text>
+              <Text style={styles.text}>
+                Bank Account: {userDetails.about.bankAccount}
+              </Text>
+              <Text style={styles.text}>
+                Pan Number: {userDetails.about.panNumber}
+              </Text>
+            </View>
+            <View style={styles.details}>
+              <Text style={styles.text}>
+                Designation: {userDetails.workDetails.designation}
+              </Text>
+              <Text style={styles.text}>
+                Hire Date: {userDetails.workDetails.hireDate}
+              </Text>
+              <Text style={styles.text}>
+                Job Description: {userDetails.workDetails.jobDescription}
+              </Text>
+            </View>
+          </View>
+        </ScrollView>
+      )}
     </Layout>
   );
 };
@@ -49,9 +95,27 @@ export default Profile;
 const styles = StyleSheet.create({
   wrapper: {
     flexDirection: 'column',
-    alignItems: 'center',
+    width: Dimensions.get('window').width,
+  },
+  info: {
+    flexDirection: 'row',
+    backgroundColor: '#dfe3eb',
+    padding: 10,
+  },
+  socials: {
+    marginTop: 10,
+    marginLeft: 10,
+    flexDirection: 'column',
   },
   text: {
-    fontSize: 40,
+    fontSize: 23,
+    paddingBottom: 3,
+    fontWeight: '500',
+  },
+
+  details: {
+    marginTop: 10,
+    backgroundColor: '#dfe3eb',
+    padding: 10,
   },
 });

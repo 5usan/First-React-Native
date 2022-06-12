@@ -11,9 +11,12 @@ const authSlice = createSlice({
       state.isLoggedIn = true;
       state.user = actions.payload;
     },
+    logout(state) {
+      state.isLoggedIn = false;
+    },
   },
 });
 
-export const {login} = authSlice.actions;
+export const {login, logout} = authSlice.actions;
 
 export default authSlice;
