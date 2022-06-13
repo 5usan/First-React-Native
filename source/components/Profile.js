@@ -5,7 +5,6 @@ import {
   StyleSheet,
   Image,
   Dimensions,
-  ScrollViewComponent,
   ScrollView,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -34,11 +33,15 @@ const Profile = ({navigation}) => {
 
   useEffect(() => {
     data && dispatch(getUserData(data));
-  }, [data, dispatch]);
+  }, [data]);
 
   console.log(userDetails, 'details');
+
+  const navigateHandler = () => {
+    navigation.navigate('First');
+  };
   return (
-    <Layout>
+    <Layout navigation={navigateHandler}>
       {userDetails && (
         <ScrollView>
           <View style={styles.wrapper}>

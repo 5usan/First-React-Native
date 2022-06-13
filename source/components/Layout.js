@@ -11,15 +11,14 @@ import {
 import {useDispatch} from 'react-redux';
 import {logout} from '../store/slice/authSlice';
 
-const Layout = props => {
+const Layout = ({navigation, children}) => {
   const dispatch = useDispatch();
 
   const logoutHandler = async () => {
-    console.log('a');
     await AsyncStorage.removeItem('isLoggedIn');
     await AsyncStorage.removeItem('user');
     dispatch(logout());
-    // navigation.navigate('First');
+    navigation();
   };
 
   return (
@@ -33,7 +32,7 @@ const Layout = props => {
           />
         </Pressable>
       </View>
-      <View style={styles.content}>{props.children}</View>
+      <View style={styles.content}>{children}</View>
     </View>
   );
 };
